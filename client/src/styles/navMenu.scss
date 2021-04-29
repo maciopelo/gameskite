@@ -1,0 +1,25 @@
+@import "global";
+
+$bgWhite: #fefefe;
+$clearWhite: #ffffff;
+$lightGray: lightgray;
+
+.menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: $navHeight;
+  background-color: $bgWhite;
+}
+
+.site-logo {
+  background-color: $lightGray;
+  margin-left: 10px;
+  padding: 5px;
+}
+
+.actual-menu {
+  background-color: $lightGray;
+  margin-right: 10px;
+  padding: 5px;
+}

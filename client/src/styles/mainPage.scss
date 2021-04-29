@@ -1,0 +1,8 @@
+@import "global";
+
+.main-content {
+  display: flex;
+  height: $mainContentHeight;
+  justify-content: center;
+  align-items: center;
+}

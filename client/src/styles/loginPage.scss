@@ -1,0 +1,30 @@
+@import "global";
+
+$formsHeight: 80%;
+
+.login-page {
+  display: flex;
+  height: $mainContentHeight;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: $formsHeight;
+  width: 400px;
+  background-color: royalblue;
+  margin-right: 5%;
+}
+
+.register-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: $formsHeight;
+  width: 400px;
+  background-color: royalblue;
+  margin-left: 5%;
+}
