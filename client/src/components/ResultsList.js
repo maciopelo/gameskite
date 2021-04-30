@@ -2,7 +2,7 @@ import React from "react";
 import { Col, Row, Container, Image } from "react-bootstrap";
 import defaultIcon from "../assets/game-pad.png";
 
-const ResultsList = ({ games, lastGameElementRef }) => {
+const ResultsList = ({ games, lastGameElementRef, handleGameClick, setChosenGame}) => {
   const gamesGrid = () => {
     const gamesRows = games.map((game, idx) => {
 
@@ -14,6 +14,10 @@ const ResultsList = ({ games, lastGameElementRef }) => {
             className="games-col"
             key={game + idx}
             ref={lastGameElementRef}
+            onClick={()=> {
+              setChosenGame(game);
+              handleGameClick();
+            }}
           >
             <Image src={miniature} className="game-miniature" />
             <h5>{game.name}</h5>
@@ -25,7 +29,10 @@ const ResultsList = ({ games, lastGameElementRef }) => {
         <Col xl={3} lg={6} md={6} sm={6}
           className="games-col"
           key={game + idx}
-          onClick={() => console.log(game.name)}
+          onClick={()=> {
+            setChosenGame(game);
+            handleGameClick();
+          }}
         >
           <Image src={miniature} className="game-miniature" />
           <h5>{game.name}</h5>
