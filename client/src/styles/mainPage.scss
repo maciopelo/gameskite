@@ -2,7 +2,29 @@
 
 .main-content {
   display: flex;
-  height: $mainContentHeight;
-  justify-content: center;
+  color: white;
+  flex-direction: column;
   align-items: center;
+}
+
+.games-results-list {
+  display: flex;
+  background-color: royalblue;
+  width: 90%;
+}
+
+.games-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: gray;
+  border: 3px solid black;
+}
+
+.game-miniature {
+  display: block;
+  height: 300px;
+  width: 200px;
+  object-fit: cover;
 }
