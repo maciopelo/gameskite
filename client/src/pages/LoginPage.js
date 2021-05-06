@@ -1,20 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import "../styles/loginPage.scss";
-//import { useHistory } from "react-router";
 import { Formik, Form, useField } from "formik"
 import * as Yup from "yup"
 
 const LoginPage = () => {
-  // const [emailReg, setEmailReg] = useState("");
-  // const [nicknameReg, setNicknameReg] = useState("");
-  // const [passwordReg, setPasswordReg] = useState("");
-  // const [passwordLog, setPasswordLog] = useState("");
-  // const [emailLog, setEmailLog] = useState("");
-  const [loginStatus, setLoginStatus] = useState("");
-  const [registerStatus, setRegisterStatus] = useState("");
-  
 
+
+  const [loginStatus, setLoginStatus] = useState("");
+  const [logResponseDissapear, setLogResponseDissapear] = useState(false);
+
+  const [registerStatus, setRegisterStatus] = useState("");
+  const [regResponseDissapear, setRegResponseDissapear] = useState(false);
+  
   const handleRegister = (values) => {
     Axios.post("http://localhost:8080/register", {
       email: values.emailReg,
@@ -23,6 +21,8 @@ const LoginPage = () => {
     }).then((res) => {
       if (res.data.message){
         setRegisterStatus(res.data.message)
+        setRegResponseDissapear(false)
+        setTimeout(() => setRegResponseDissapear(true), 2000)
       }
     });
   };
@@ -33,6 +33,8 @@ const LoginPage = () => {
       email: values.emailLog,
       password: values.passwordLog,
     }).then((res) => {
+      setLogResponseDissapear(false)
+      setTimeout(() => setLogResponseDissapear(true), 2000)
       if (res.data.message){
         setLoginStatus(res.data.message)
       }
@@ -43,9 +45,8 @@ const LoginPage = () => {
     });
   };
 
-  const CustomTextInput = ({label, ...props}) =>{
+  const CustomTextInput = ({label, ...props}) => {
     const [field, meta] = useField(props);
-
     return (
       <>
         <label htmlFor={props.id || props.name}>{label}</label>
@@ -59,7 +60,8 @@ const LoginPage = () => {
 
 
   return (
-    <div className = "login-page container row col-sm">
+    <div className="login-page">
+      
     <Formik
     initialValues={{
       nick: "",
@@ -79,7 +81,6 @@ const LoginPage = () => {
       .required("Required"),
       passwordReg: Yup.string()
       .matches(
-
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
             "8 Characters, One Uppercase, One Lowercase, One Number and One Special Character"
           )
@@ -111,7 +112,7 @@ const LoginPage = () => {
           <CustomTextInput label="" name = "emailReg" type="email" placeholder="Email" />
           <button type = "submit">{props.isSubmitting ? "Loading..." : "Submit"}</button>
 
-          <h1>{registerStatus}</h1>
+          <h4 className={`register-response-text ${regResponseDissapear && "dissapear"}`}>{registerStatus}</h4>
 
         </Form>
 
@@ -145,7 +146,6 @@ const LoginPage = () => {
       
       {props => (
         
-          
         <Form className="login-panel">
           <h1>Log in</h1>
 
@@ -153,72 +153,14 @@ const LoginPage = () => {
           <CustomTextInput label="" name = "passwordLog" type="password" placeholder="Password" />
           <button type = "submit">{props.isSubmitting ? "Loading..." : "Log in"}</button>
 
-          <h1>{loginStatus}</h1>
+          <h4 className={`login-response-text ${logResponseDissapear && "dissapear"}`}>{loginStatus}</h4>
 
         </Form>
 
-     
       )}
       
     </Formik>
-    </div>
-  
-
-
-    // <div className="login-page">
-    //   <div className="login-panel">
-    //     <h1>Login</h1>
-    //     <label>
-    //       e-mail
-    //       <input placeholder="e-mail" type="email" 
-    //       value = {emailLog}
-    //       onChange={(e) => setEmailLog(e.target.value)}
-    //       />
-    //     </label>
-
-    //     <label>
-    //       password
-    //       <input placeholder="password" type="password" 
-    //       value = {passwordLog}
-    //       onChange={(e) => setPasswordLog(e.target.value)}
-    //       />
-    //     </label>
-    //     <button onClick={handleLogin}>Login</button>
-    //   </div>
-    //   
-
-    //   <div className="register-panel">
-    //     <h1>Register</h1>
-    //     <label>
-    //       e-mail
-    //       <input
-    //         type="email"
-    //         value={emailReg}
-    //         onChange={(e) => setEmailReg(e.target.value)}
-    //       />
-    //     </label>
-
-    //     <label>
-    //       nickname
-    //       <input
-    //         type="text"
-    //         value={nicknameReg}
-    //         onChange={(e) => setNicknameReg(e.target.value)}
-    //       />
-    //     </label>
-
-    //     <label>
-    //       password
-    //       <input
-    //         type="password"
-    //         value={passwordReg}
-    //         onChange={(e) => setPasswordReg(e.target.value)}
-    //       />
-    //     </label>
-    //     <button onClick={handleRegister}>Register</button>
-    //   </div>
-    // </div>
-  );
+    </div>);
 };
 
 export default LoginPage;
