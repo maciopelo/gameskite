@@ -2,6 +2,7 @@ const express = require("express");
 const mysql = require("mysql");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const bcrypt = require('bcrypt')
 
 dotenv.config({ path: "./.env" });
 
@@ -56,8 +57,7 @@ app.post("/register", (req, res) => {
       res.send({err: errNick});
     }
     if(resultNick.length > 0){
-      console.log("Username taken")
-      res.send({message: "Username taken"});
+      res.send({message: "Username already exists!"});
     }
     else {
 
@@ -67,18 +67,21 @@ app.post("/register", (req, res) => {
         }
         
         if(resultEmail.length > 0){
-          console.log("Email taken")
-          res.send({message: "Email taken"});
+          res.send({message: "Email already used!"});
         }
         else {
 
-          db.query(queryReg, [nick, email, password], (errReg, resultReg) => {
-          console.log("less goo")
-          console.log(errReg);
-          console.log(resultReg);
-          res.send({message: "Succesfull Registration!"});
-
+          bcrypt.hash(password, 10, (err, hashedPassword) => {
+            console.log(password,hashedPassword)
+            console.log(err)
+            db.query(queryReg, [nick, email, hashedPassword], (errReg, resultReg) => {
+              console.log(errReg)
+              console.log(resultReg)
+              res.send({message: "Succesfull registration!"});
+            });
+            
           });
+
         }
       });
     }
@@ -86,31 +89,34 @@ app.post("/register", (req, res) => {
 });
 
 
-app.post("/login", (req, res) => {
+app.post("/login", (req, response) => {
   const {email, password} = req.body;
 
-  const query = "SELECT * FROM users WHERE email = ? AND password = ?";
+  const query = "SELECT * FROM users WHERE email = ?";
 
   db.query(query, [email, password], (err, result) => {
-    if(err) {
+    if(err){ 
       res.send({err: err});
+      return;
     }
+    
+    bcrypt.compare(password, result[0].password, (err, res) =>  {
 
-    if(result.length > 0){
-      res.send(result);
-    }
-    else {
-      res.send({message: "Wrong username or password"})
-    }
+      if(res){
+        response.send({message:"Logged in"})
+      }else{
+        response.send({message:"Wrong username or password"})
+      }
       
-  
-  });
+    });
+
+  })
+
 });
 
 
 
-
 app.listen(PORT, () => {
-  console.log(`Example app listening at http://localhost:${PORT}`);
+  console.log(`App listening at http://localhost:${PORT}`);
 });
 
