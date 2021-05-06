@@ -19,8 +19,12 @@ const ResultsList = ({ games, lastGameElementRef, handleGameClick, setChosenGame
               handleGameClick();
             }}
           >
-            <Image src={miniature} className="game-miniature" />
-            <h5>{game.name}</h5>
+            <div className="inner-col-wrapper">
+              <Image src={miniature} className="game-miniature" />
+              <div className="game-title">
+                <h5>{game.name}</h5>
+              </div>
+            </div>
           </Col>
         );
       }
@@ -34,8 +38,13 @@ const ResultsList = ({ games, lastGameElementRef, handleGameClick, setChosenGame
             handleGameClick();
           }}
         >
-          <Image src={miniature} className="game-miniature" />
-          <h5>{game.name}</h5>
+           <div className="inner-col-wrapper">
+           <Image src={miniature} className="game-miniature" />
+             <div className="game-title">
+                <h5>{game.name}</h5>
+             </div>
+           </div>
+          
         </Col>
       );
     });

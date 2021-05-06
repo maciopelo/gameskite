@@ -6,6 +6,24 @@ import useGamesSearch from "../hooks/useGamesSearch";
 import GameSelectModal from "../components/GameSelectModal"
 
 
+
+const SearchInput = ({gameTitle,handleGameSearch}) => {
+  return ( 
+    <div className="search-bar-container">
+        <input
+          className="search-bar"
+          type="text"
+          placeholder="Enter a game title..."
+          value={gameTitle}
+          onChange={handleGameSearch}
+        />
+    </div>
+   );
+}
+ 
+
+
+
 const MainPage = () => {
 
   const [gameTitle, setGameTitle] = useState("");
@@ -43,16 +61,11 @@ const MainPage = () => {
 
   return (
     <div className="main-content">
-      <div>
-        <p>SearchBar</p>
-        <input
-          type="text"
-          placeholder="Enter a game title..."
-          value={gameTitle}
-          onChange={handleGameSearch}
-        />
-      </div>
-      
+
+      <SearchInput 
+        gameTitle={gameTitle} 
+        handleGameSearch={handleGameSearch}/>
+
       <ResultsList 
         games={gamesDetails} 
         lastGameElementRef={lastGameElementRef} 
