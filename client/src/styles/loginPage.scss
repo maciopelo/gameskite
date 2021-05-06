@@ -104,7 +104,10 @@ h1{
   width: 15vh;
   align-self: center;
   position: absolute;
+  
+
   &:hover{
     box-shadow: 0 0 10px $shadowColor;
   }
+
 }
