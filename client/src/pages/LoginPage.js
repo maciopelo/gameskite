@@ -48,11 +48,11 @@ const LoginPage = () => {
 
     return (
       <>
-      <label htmlFor={props.id || props.name}>{label}</label>
-      <input className="text-input" {...field} {...props} />
-      {meta.touched && meta.error ? (
-        <div className="error">{meta.error}</div>
-      ): null}
+        <label htmlFor={props.id || props.name}>{label}</label>
+        <input className="text-input" {...field} {...props} />
+        {meta.touched && meta.error ? (
+          <div className="error">{meta.error}</div>
+        ): null}
       </>
     )
   }
@@ -102,8 +102,6 @@ const LoginPage = () => {
       
       {props => (
         
-          
-
         <Form className="register-panel">
 
           <h1>Register</h1>

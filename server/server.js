@@ -42,7 +42,6 @@ app.post("/register", (req, res) => {
 
   console.log(req.body)
   
-  
   const { email, nick, password } = req.body;
 
   const queryNick = "SELECT * FROM users WHERE nick = ?";
@@ -67,12 +66,9 @@ app.post("/register", (req, res) => {
           res.send({err: errEmail});
         }
         
-
-
         if(resultEmail.length > 0){
           console.log("Email taken")
           res.send({message: "Email taken"});
-
         }
         else {
 
@@ -83,25 +79,12 @@ app.post("/register", (req, res) => {
           res.send({message: "Succesfull Registration!"});
 
           });
-
-
         }
-
       });
-
     }
-
   });
-
-
-
-
-
-  
-
-
-
 });
+
 
 app.post("/login", (req, res) => {
   const {email, password} = req.body;

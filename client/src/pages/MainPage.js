@@ -52,6 +52,7 @@ const MainPage = () => {
           onChange={handleGameSearch}
         />
       </div>
+      
       <ResultsList 
         games={gamesDetails} 
         lastGameElementRef={lastGameElementRef} 
