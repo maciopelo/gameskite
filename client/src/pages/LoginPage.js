@@ -59,7 +59,7 @@ const LoginPage = () => {
 
 
   return (
-    <div className = "login-page">
+    <div className = "login-page container row col-sm">
     <Formik
     initialValues={{
       nick: "",
@@ -81,7 +81,7 @@ const LoginPage = () => {
       .matches(
 
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-            "Must Contain at least 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
+            "8 Characters, One Uppercase, One Lowercase, One Number and One Special Character"
           )
       .required("Required"),
       confirmPasswordReg: Yup.string()
@@ -105,10 +105,10 @@ const LoginPage = () => {
         <Form className="register-panel">
 
           <h1>Register</h1>
-          <CustomTextInput label="Nick" name = "nick" type="text" placeholder="nick" />
-          <CustomTextInput label="Password" name = "passwordReg" type="password" placeholder="smth" />
-          <CustomTextInput label="Confirm Password" name = "confirmPasswordReg" type="password" placeholder="smth" />
-          <CustomTextInput label="Email" name = "emailReg" type="email" placeholder="smth@smth.com" />
+          <CustomTextInput label="" name = "nick" type="text" placeholder="Nick" />
+          <CustomTextInput label="" name = "passwordReg" type="password" placeholder="Password" />
+          <CustomTextInput label="" name = "confirmPasswordReg" type="password" placeholder="Confirm Password" />
+          <CustomTextInput label="" name = "emailReg" type="email" placeholder="Email" />
           <button type = "submit">{props.isSubmitting ? "Loading..." : "Submit"}</button>
 
           <h1>{registerStatus}</h1>
@@ -149,9 +149,9 @@ const LoginPage = () => {
         <Form className="login-panel">
           <h1>Log in</h1>
 
-          <CustomTextInput label="Email" name = "emailLog" type="email" placeholder="smth@smth.com" />
-          <CustomTextInput label="Password" name = "passwordLog" type="password" placeholder="smth" />
-          <button type = "submit">{props.isSubmitting ? "Loading..." : "Submit"}</button>
+          <CustomTextInput label="" name = "emailLog" type="email" placeholder="Email" />
+          <CustomTextInput label="" name = "passwordLog" type="password" placeholder="Password" />
+          <button type = "submit">{props.isSubmitting ? "Loading..." : "Log in"}</button>
 
           <h1>{loginStatus}</h1>
 
