@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useRef, useCallback } from "react";
 import "../styles/mainPage.scss";
+import "../styles/modal.scss";
 import ResultsList from "../components/ResultsList";
 import useGamesSearch from "../hooks/useGamesSearch";
 import GameSelectModal from "../components/GameSelectModal"
