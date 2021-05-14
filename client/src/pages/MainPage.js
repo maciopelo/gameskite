@@ -22,14 +22,13 @@ const SearchInput = ({gameTitle,handleGameSearch}) => {
 }
  
 
-
-
 const MainPage = () => {
 
   const [gameTitle, setGameTitle] = useState("");
   const [pageNubmer, setPageNumber] = useState(1);
   const [showModal, setShowModal] = useState(false)
   const [chosenGame, setChosenGame] = useState(null)
+
 
   const { games, gamesDetails, isLoading, isError, hasMore } = useGamesSearch(gameTitle, pageNubmer);
 
