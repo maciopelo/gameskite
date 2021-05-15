@@ -1,54 +1,54 @@
 import React from 'react';
-import kite from "../assets/kite.png"
+import gameImg from "../assets/game-pad.png"
 import "../styles/myGames.scss"
 
 
 const GAMES = [
 
     {
-        image:kite,
+        image:gameImg,
         title:"Lego Avengers",
         status:"Played",
         rate:"7",
     },
     {
-        image:kite,
+        image:gameImg,
         title:"Lego Avengers",
         status:"Played",
         rate:"7",
     },
     {
-        image:kite,
+        image:gameImg,
         title:"Lego Avengers",
         status:"Played",
         rate:"7",
     },
     {
-        image:kite,
+        image:gameImg,
         title:"Lego Avengers",
         status:"Played",
         rate:"7",
     },
     {
-        image:kite,
+        image:gameImg,
         title:"Lego Avengers",
         status:"Played",
         rate:"7",
     },
     {
-        image:kite,
+        image:gameImg,
         title:"Lego Avengers",
         status:"Played",
         rate:"7",
     },
     {
-        image:kite,
+        image:gameImg,
         title:"Lego Avengers",
         status:"Played",
         rate:"7",
     },
     {
-        image:kite,
+        image:gameImg,
         title:"Lego Avengers",
         status:"Played",
         rate:"7",
@@ -88,7 +88,7 @@ const MyGamesPage = () => {
                         <li>Games</li>
                         <li>Devs</li>
                         <li>Favs</li>
-                        <li>Yo Mom</li>
+                        <li>Other</li>
                     </ul>
                 </nav>
 

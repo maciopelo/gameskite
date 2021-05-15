@@ -1,25 +1,34 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Axios from "axios";
 import "../styles/loginPage.scss";
 import { Formik, Form, useField } from "formik"
+import { useHistory } from "react-router-dom";
 import * as Yup from "yup"
+import { StoreContext } from "../store/StoreProvider";
+
+
+const BASE_URL = "http://localhost:8080"
 
 const LoginPage = () => {
 
+  let history = useHistory();
 
   const [loginStatus, setLoginStatus] = useState("");
   const [logResponseDissapear, setLogResponseDissapear] = useState(false);
 
   const [registerStatus, setRegisterStatus] = useState("");
   const [regResponseDissapear, setRegResponseDissapear] = useState(false);
+
+  const { userData, setUserData, setUserJWT } = useContext(StoreContext)
   
+
   const handleRegister = (values) => {
-    Axios.post("http://localhost:8080/register", {
+    Axios.post(`${BASE_URL}/register`, {
       email: values.emailReg,
       nick: values.nick,
       password: values.passwordReg,
     }).then((res) => {
-      if (res.data.message){
+      if (res.status === 200){
         setRegisterStatus(res.data.message)
         setRegResponseDissapear(false)
         setTimeout(() => setRegResponseDissapear(true), 2000)
@@ -29,22 +38,34 @@ const LoginPage = () => {
 
 
   const handleLogin = (values) => {
-    Axios.post("http://localhost:8080/login", {
+
+    Axios.post(`${BASE_URL}/login`, {
       email: values.emailLog,
       password: values.passwordLog,
     }).then((res) => {
       setLogResponseDissapear(false)
-      setTimeout(() => setLogResponseDissapear(true), 2000)
-      if (res.data.message){
-        setLoginStatus(res.data.message)
+
+      if (res.status === 200){
+
+        const {auth, nick, isLogged} = res.data
+        setUserData({auth, nick, isLogged})
+
+        setTimeout(() => { setLogResponseDissapear(true); }, 2000)
+
+        if(res.data.isLogged && res.data.auth){
+          localStorage.setItem("token", res.data.token)
+          setUserJWT(res.data.token)
+          history.push("/")
+        }
+
       }
       else{
-        setLoginStatus(res.data[0].nick)
+        console.log(`Error while logging | Status code: ${res.status}`)
       }
-      
     });
   };
 
+  
   const CustomTextInput = ({label, ...props}) => {
     const [field, meta] = useField(props);
     return (
@@ -153,7 +174,7 @@ const LoginPage = () => {
           <CustomTextInput label="" name = "passwordLog" type="password" placeholder="Password" />
           <button type = "submit">{props.isSubmitting ? "Loading..." : "Log in"}</button>
 
-          <h4 className={`login-response-text ${logResponseDissapear && "dissapear"}`}>{loginStatus}</h4>
+          <h4 className={`login-response-text ${logResponseDissapear && "dissapear"}`}>{userData.message}</h4>
 
         </Form>
 

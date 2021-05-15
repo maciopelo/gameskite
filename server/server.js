@@ -1,17 +1,20 @@
+const dotenv = require("dotenv");
+dotenv.config({ path: "./.env" });
+
 const express = require("express");
 const mysql = require("mysql");
-const dotenv = require("dotenv");
 const cors = require("cors");
 const bcrypt = require('bcrypt')
-
-dotenv.config({ path: "./.env" });
+const jwt = require('jsonwebtoken')
 
 const PORT = 8080 || process.env.PORT;
 
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended:true}));
 app.use(cors());
+
 
 /* local db */
 const db = mysql.createConnection({
@@ -22,7 +25,6 @@ const db = mysql.createConnection({
 });
 
 
-
 /* remote db */
 // const db = mysql.createConnection({
 //   host: process.env.REMOTE_DB_HOST,
@@ -30,6 +32,7 @@ const db = mysql.createConnection({
 //   password: process.env.REMOTE_DB_PASSWORD,
 //   database: process.env.REMOTE_DB_NAME,
 // });
+
 
 db.connect((err) => {
   if (err) {
@@ -88,6 +91,27 @@ app.post("/register", (req, res) => {
   });
 });
 
+const authenticate = (req, res, next) => {
+
+  
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]
+
+  if(token == null) return res.status(401);
+
+  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
+    if(err) return res.status(403)
+
+    req.user = user;
+    next();
+  })
+}
+
+
+app.get("/check/auth", authenticate, (req, res) => {
+  res.send(req.user);
+})
+
 
 app.post("/login", (req, response) => {
   const {email, password} = req.body;
@@ -103,9 +127,26 @@ app.post("/login", (req, response) => {
     bcrypt.compare(password, result[0].password, (err, res) =>  {
 
       if(res){
-        response.send({message:"Logged in"})
+        
+        const id = result[0].id
+        const nick = result[0].nick
+        const token = jwt.sign({id,nick}, process.env.JWT_SECRET_KEY, {expiresIn:(60*60*24)})
+
+        response.send(
+          {
+            auth:true, 
+            token:token,
+            isLogged:true, 
+            nick:result[0].nick
+          });
+
       }else{
-        response.send({message:"Wrong username or password"})
+        response.send(
+          {
+            auth:false, 
+            isLogged:false, 
+            message:"Wrong username or password"
+          });
       }
       
     });
