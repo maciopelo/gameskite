@@ -1,77 +1,76 @@
-import React, {useContext} from "react";
-import "../styles/navMenu.scss";
-import kite from "../assets/kite.png"
-import { NavLink } from "react-router-dom";
-import  {StoreContext} from "../store/StoreProvider"
-import axios from "axios"
+import React, { useContext } from 'react';
+import '../styles/navMenu.scss';
+import kite from '../assets/kite.png';
+import { NavLink } from 'react-router-dom';
+import { StoreContext } from '../store/StoreProvider';
+import axios from 'axios';
 
-
-const Logo = () => { 
+const Logo = () => {
   return (
-    <div className="site-logo">
-      <NavLink className="logo-link" to="/" exact>
-        <span className="logo-text" style={{textDecoration:"none"}}>GamesKite</span>
-        <img src={kite} className="logo-img"/>
+    <div className='site-logo'>
+      <NavLink className='logo-link' to='/' exact>
+        <span className='logo-text' style={{ textDecoration: 'none' }}>
+          GamesKite
+        </span>
+        <img src={kite} className='logo-img' />
       </NavLink>
     </div>
-  )
-}
+  );
+};
 
-const LoginButton = ({isUserLogged}) => {
-
-  const setLoginButtonValue = isUserLogged ? "Log out" : "Login";
-  const { setUserData, setUserJWT } = useContext(StoreContext)
-
+const LoginButton = ({ isUserLogged }) => {
+  const setLoginButtonValue = isUserLogged ? 'Log out' : 'Login';
+  const { setUserData, setUserJWT } = useContext(StoreContext);
 
   const handleLogout = () => {
     localStorage.clear();
-    setUserData({auth:false, nick:"", isLogged:false})
-    setUserJWT(null)
-  }
+    setUserData({ auth: false, nick: '', isLogged: false });
+    setUserJWT(null);
+  };
 
-
-  if(!isUserLogged){
-    return(
-      <NavLink className="logo-link" to="/login">
-        <div className="menu-button">
+  if (!isUserLogged) {
+    return (
+      <NavLink className='logo-link' to='/login'>
+        <div className='menu-button'>
           <span>{setLoginButtonValue}</span>
         </div>
       </NavLink>
-    )
-  }else{
-    return(
-      <button className="menu-button" onClick={handleLogout}>
+    );
+  } else {
+    return (
+      <button className='menu-button' onClick={handleLogout}>
         <span>{setLoginButtonValue}</span>
       </button>
-    )
+    );
   }
-  
-}
+};
 
-const MenuButton = ({innerText, route}) => {
-  return(
-    <NavLink className="logo-link" to={route}>
-      <div className="menu-button">
+const MenuButton = ({ innerText, route }) => {
+  return (
+    <NavLink className='logo-link' to={route}>
+      <div className='menu-button'>
         <span>{innerText}</span>
       </div>
     </NavLink>
-  )
-}
-  
-const Menu = () => {
+  );
+};
 
-  const { userData} = useContext(StoreContext);
-  
+const Menu = () => {
+  const { userData } = useContext(StoreContext);
+
   return (
-    <nav className="menu">
-      <Logo/>
-      <div className="menu-btns-wrapper">
-        { userData && userData.isLogged && userData.auth && (
-        <>
-          <MenuButton innerText="MyGames" route="/my-games"/>
-        </>
+    <nav className='menu'>
+      <Logo />
+      <div className='menu-btns-wrapper'>
+        {userData && userData.isLogged && userData.auth && (
+          <>
+            <MenuButton
+              innerText='MyGames'
+              route={`/my-games/${userData.nick}`}
+            />
+          </>
         )}
-        <LoginButton isUserLogged={userData.isLogged}/>
+        <LoginButton isUserLogged={userData.isLogged} />
       </div>
     </nav>
   );
