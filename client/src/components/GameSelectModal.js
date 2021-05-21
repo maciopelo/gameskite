@@ -8,7 +8,7 @@ const BASE_URL = 'http://localhost:8080';
 
 const GameSelectModal = ({ show, chosenGame, onHide }) => {
   const { userData } = useContext(StoreContext);
-
+console.log(chosenGame)
   const handleAdding = () => {
     Axios.post(`${BASE_URL}/add_game`, {
       image: chosenGame.background_image,

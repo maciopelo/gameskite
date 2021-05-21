@@ -1,4 +1,4 @@
-import axios from "axios";
+import {IconButton} from '@material-ui/core/';
 import React, { useState, useRef, useCallback } from "react";
 import "../styles/mainPage.scss";
 import "../styles/modal.scss";
@@ -8,7 +8,7 @@ import GameSelectModal from "../components/GameSelectModal"
 
 
 
-const SearchInput = ({gameTitle,handleGameSearch}) => {
+const SearchInput = ({gameTitle,handleGameSearch,resetInput}) => {
   return ( 
     <div className="search-bar-container">
         <input
@@ -18,6 +18,7 @@ const SearchInput = ({gameTitle,handleGameSearch}) => {
           value={gameTitle}
           onChange={handleGameSearch}
         />
+        <IconButton aria-label="delete" color="primary" style={{color:'#fff'}} onClick={resetInput}> X</IconButton>
     </div>
    );
 }
@@ -59,15 +60,23 @@ const MainPage = () => {
     setShowModal(false);
   }
 
+  const resetInput = () => {
+    setGameTitle("");
+  }
+
+
   return (
     <div className="main-content">
 
       <SearchInput 
         gameTitle={gameTitle} 
-        handleGameSearch={handleGameSearch}/>
+        handleGameSearch={handleGameSearch}
+        resetInput={resetInput}
+        />
 
       <ResultsList 
-        games={gamesDetails} 
+        games={gamesDetails}
+        isLoading={isLoading} 
         lastGameElementRef={lastGameElementRef} 
         handleGameClick={() => setShowModal(true)}
         setChosenGame={setChosenGame}
@@ -75,8 +84,8 @@ const MainPage = () => {
 
       <GameSelectModal show={showModal}  chosenGame={chosenGame} onHide={handleModalHide}/>
 
-      <div>{isLoading && "Loading..."}</div>
-      <div>{isError && "Something went wrong :("}</div>
+      <div className="loading-message">{isLoading && "Loading..."}</div>
+      <div className="error-message">{isError && "Something went wrong :("}</div>
 
     </div>
   );

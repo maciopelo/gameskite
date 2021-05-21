@@ -3,7 +3,6 @@ import '../styles/navMenu.scss';
 import kite from '../assets/kite.png';
 import { NavLink } from 'react-router-dom';
 import { StoreContext } from '../store/StoreProvider';
-import axios from 'axios';
 
 const Logo = () => {
   return (

@@ -22,11 +22,7 @@ function App() {
         <Switch>
           <Route path='/' exact component={MainPage} />
           <Route path={`/my-games/${userData.nick}`} component={MyGamesPage} />
-          {userData && userData.isLogged && userData.auth ? (
-            <Redirect to='/' />
-          ) : (
-            <Route path='/login' component={LoginPage} />
-          )}
+          {userData && userData.isLogged && userData.auth ? (<Redirect to='/' />) : (<Route path='/login' component={LoginPage} />)}
           <Route component={ErrorPage} />
         </Switch>
       </div>
