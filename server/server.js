@@ -89,21 +89,32 @@ app.post('/add_game', (req, res) => {
   const { image, title, status, rate, nick } = req.body;
 
   const queryId = 'SELECT id FROM users WHERE nick = ?';
+
+  const checkGame = 'SELECT * FROM Games WHERE users_id = ? AND title = ?';
+
   const insertGameQuery =
     'INSERT INTO Games (image, title, status, rate, users_id) VALUES (?,?,?,?,?)';
 
   db.query(queryId, [nick], (errId, resultId) => {
     // console.log(resultId[0].id);
     // console.log(errId);
-    db.query(
-      insertGameQuery,
-      [image, title, status, rate, resultId[0].id],
-      (errInsert, resultInsert) => {
-        console.log(errInsert);
-        console.log(resultInsert);
+
+    db.query(checkGame, [resultId[0].id, title], (errCheck, resultCheck) => {
+      if (resultCheck.length > 0) {
+        console.log('Game already added');
         res.send();
+      } else {
+        db.query(
+          insertGameQuery,
+          [image, title, status, rate, resultId[0].id],
+          (errInsert, resultInsert) => {
+            console.log(errInsert);
+            console.log(resultInsert);
+            res.send();
+          }
+        );
       }
-    );
+    });
   });
 });
 
