@@ -8,7 +8,7 @@ const BASE_URL = 'http://localhost:8080';
 
 const GameSelectModal = ({ show, chosenGame, onHide }) => {
   const { userData } = useContext(StoreContext);
-console.log(chosenGame)
+  console.log(chosenGame);
   const handleAdding = () => {
     Axios.post(`${BASE_URL}/add_game`, {
       image: chosenGame.background_image,
@@ -43,7 +43,10 @@ console.log(chosenGame)
                   alt=''
                   className='modal-img'
                 />
-                <p className='add_p' onClick={() => handleAdding(chosenGame)}>
+                <p
+                  className='add_p'
+                  onClick={userData.isLogged && handleAdding}
+                >
                   Add to list
                 </p>
                 <p className='add_p'>Add to favourites</p>
