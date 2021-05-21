@@ -65,6 +65,7 @@ const useGamesSearch = (gameName, pageNumber) => {
     return () => cancel();
   }, [gameName, pageNumber]);
 
+
   return { games, gamesDetails ,isLoading, isError, hasMore };
 };
 

@@ -1,9 +1,10 @@
 import React from "react";
+import "../styles/errorPage.scss";
 
 const ErrorPage = () => {
   return (
-    <div>
-      <p>error page </p>
+    <div className="error-page">
+      <p className="error-page-message"> Something went wrong :( </p>
     </div>
   );
 };
