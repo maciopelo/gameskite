@@ -59,6 +59,7 @@ const BASE_URL = 'http://localhost:8080';
 
 const MyGamesPage = () => {
   const [games, setGames] = useState([{}]);
+  const [page, setPage] = useState('Game');
   const { userData } = useContext(StoreContext);
 
   useEffect(() => {

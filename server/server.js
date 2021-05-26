@@ -86,35 +86,65 @@ app.post('/register', (req, res) => {
 
 app.post('/add_game', (req, res) => {
   console.log(req.body);
-  const { image, title, status, rate, nick } = req.body;
+  const {
+    gameImage,
+    title,
+    status,
+    rate,
+    nick,
+    tableName,
+    namePubOrDev,
+    imagePubOrDev,
+    slug,
+  } = req.body;
+
+  let finalName = title;
+  let finalImg = gameImage;
+  let finalStatus = status;
 
   const queryId = 'SELECT id FROM users WHERE nick = ?';
 
-  const checkGame = 'SELECT * FROM Games WHERE users_id = ? AND title = ?';
+  let checkIfExist = 'SELECT * FROM Games WHERE users_id = ? AND title = ?';
 
-  const insertGameQuery =
+  let insertGameQuery =
     'INSERT INTO Games (image, title, status, rate, users_id) VALUES (?,?,?,?,?)';
+
+  if (tableName !== 'Games') {
+    finalName = namePubOrDev;
+    finalImg = imagePubOrDev;
+    finalStatus = slug;
+
+    checkIfExist = `SELECT * FROM ${tableName} WHERE users_id = ? AND name = ?`;
+
+    insertGameQuery = `INSERT INTO ${tableName} (image, name, slug, rate, users_id) VALUES (?,?,?,?,?)`;
+  }
+
+  //const insertProducentQuery =
 
   db.query(queryId, [nick], (errId, resultId) => {
     // console.log(resultId[0].id);
     // console.log(errId);
 
-    db.query(checkGame, [resultId[0].id, title], (errCheck, resultCheck) => {
-      if (resultCheck.length > 0) {
-        console.log('Game already added');
-        res.send();
-      } else {
-        db.query(
-          insertGameQuery,
-          [image, title, status, rate, resultId[0].id],
-          (errInsert, resultInsert) => {
-            console.log(errInsert);
-            console.log(resultInsert);
-            res.send();
-          }
-        );
+    db.query(
+      checkIfExist,
+      [resultId[0].id, finalName],
+      (errCheck, resultCheck) => {
+        if (resultCheck.length > 0) {
+          console.log('Game already added');
+          res.send();
+        } else {
+          db.query(
+            insertGameQuery,
+            [finalImg, finalName, finalStatus, rate, resultId[0].id],
+            (errInsert, resultInsert) => {
+              console.log(errInsert);
+              console.log(resultInsert);
+              res.send();
+            }
+          );
+        }
       }
-    });
+    );
   });
 });
 
@@ -138,7 +168,6 @@ app.get('/check/auth', authenticate, (req, res) => {
 
 app.get('/my-games/:userNick', (req, res) => {
   const nick = req.params.userNick;
-
   const queryId = 'SELECT id FROM users WHERE nick = ?';
   const takeGames =
     'Select image, title, status, rate FROM Games WHERE users_id = ?';
@@ -146,6 +175,7 @@ app.get('/my-games/:userNick', (req, res) => {
   db.query(queryId, [nick], (errId, resultId) => {
     db.query(takeGames, [resultId[0].id], (errGames, resultGames) => {
       console.log(resultGames);
+      console.log(req.query);
       res.send(resultGames);
     });
   });
