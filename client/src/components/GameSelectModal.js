@@ -1,5 +1,5 @@
 import Axios from 'axios';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { StoreContext } from '../store/StoreProvider';
 // import { userData } from '../pages/LoginPage';
@@ -7,16 +7,68 @@ import { StoreContext } from '../store/StoreProvider';
 const BASE_URL = 'http://localhost:8080';
 
 const GameSelectModal = ({ show, chosenGame, onHide }) => {
+  const [devStatus, setDevStatus] = useState(true);
+  const [publisherStatus, setPublisherStatus] = useState(true);
+  const [devStatusText, setDevStatusText] = useState('none');
+  const [publisherStatusText, setPublisherStatusText] = useState('none');
+
   const { userData } = useContext(StoreContext);
-  console.log(chosenGame);
-  const handleAdding = () => {
+  const handleAdding = (table, name, image) => {
     Axios.post(`${BASE_URL}/add_game`, {
-      image: chosenGame.background_image,
+      gameImage: chosenGame.background_image,
       title: chosenGame.name,
       status: 'Played',
       rate: chosenGame.rating,
       nick: userData.nick,
+      tableName: table,
+      namePubOrDev: name,
+      imagePubOrDev: image,
+      slug: name.replace(/\s/g, '-').toLowerCase(),
     }).then((res) => {});
+  };
+
+  const changeState = (option) => {
+    if (option === 'dev') {
+      setDevStatus(!devStatus);
+      if (devStatus) {
+        setDevStatusText('block');
+      } else {
+        setDevStatusText('none');
+      }
+    } else {
+      setPublisherStatus(!publisherStatus);
+      if (publisherStatus) {
+        setPublisherStatusText('block');
+      } else {
+        setPublisherStatusText('none');
+      }
+    }
+  };
+
+  const ListOfprops = (props) => {
+    return (
+      <>
+        {chosenGame[props].map((p) => (
+          <li key={p.name}>{p.name}</li>
+        ))}
+      </>
+    );
+  };
+
+  const ListOfpropsToSend = (props) => {
+    return (
+      <>
+        {chosenGame[props].map((p) => (
+          <li
+            className='add_p'
+            key={p.name}
+            onClick={() => handleAdding(props, p.name, p.image_background)}
+          >
+            {p.name}
+          </li>
+        ))}
+      </>
+    );
   };
 
   return (
@@ -45,10 +97,31 @@ const GameSelectModal = ({ show, chosenGame, onHide }) => {
                 />
                 <p
                   className='add_p'
-                  onClick={userData.isLogged && handleAdding}
+                  onClick={
+                    userData.isLogged && (() => handleAdding('Games', 'none'))
+                  }
                 >
-                  Add to list
+                  Add to game list
                 </p>
+
+                <p
+                  className='add_p'
+                  onClick={userData.isLogged && (() => changeState('dev'))}
+                >
+                  Add to developer list
+                </p>
+                <div style={{ display: devStatusText }}>
+                  {ListOfpropsToSend('developers')}
+                </div>
+                <p
+                  className='add_p'
+                  onClick={userData.isLogged && (() => changeState('pub'))}
+                >
+                  Add to publisher list
+                </p>
+                <div style={{ display: publisherStatusText }}>
+                  {ListOfpropsToSend('publishers')}
+                </div>
                 <p className='add_p'>Add to favourites</p>
                 <p className='score'>Score</p>
                 <p className='p_rating'>
@@ -62,6 +135,12 @@ const GameSelectModal = ({ show, chosenGame, onHide }) => {
               <div className='col-9'>
                 <h4>Description</h4>
                 <p>{chosenGame.description_raw}</p>
+                <h4>Genres</h4>
+                {ListOfprops('genres')}
+                <h4>Developers</h4>
+                {ListOfprops('developers')}
+                <h4>Publishers</h4>
+                {ListOfprops('publishers')}
                 <h4>Released data</h4>
                 <p>{chosenGame.released}</p>
                 <h4>Available platforms</h4>
