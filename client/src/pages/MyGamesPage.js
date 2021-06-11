@@ -4,83 +4,70 @@ import '../styles/myGames.scss';
 import Axios from 'axios';
 import { StoreContext } from '../store/StoreProvider';
 
+
+const LIST_TYPE = {
+  Games:"Games",
+  Devs:"Devs",
+  Publishers:"Publishers"
+}
+
+
 const BASE_URL = 'http://localhost:8080';
 
-// const games = [
-//   {
-//     image: gameImg,
-//     title: 'Lego Avengers',
-//     status: 'Played',
-//     rate: '7',
-//   },
-//   {
-//     image: gameImg,
-//     title: 'Lego Avengers',
-//     status: 'Played',
-//     rate: '7',
-//   },
-//   {
-//     image: gameImg,
-//     title: 'Lego Avengers',
-//     status: 'Played',
-//     rate: '7',
-//   },
-//   {
-//     image: gameImg,
-//     title: 'Lego Avengers',
-//     status: 'Played',
-//     rate: '7',
-//   },
-//   {
-//     image: gameImg,
-//     title: 'Lego Avengers',
-//     status: 'Played',
-//     rate: '7',
-//   },
-//   {
-//     image: gameImg,
-//     title: 'Lego Avengers',
-//     status: 'Played',
-//     rate: '7',
-//   },
-//   {
-//     image: gameImg,
-//     title: 'Lego Avengers',
-//     status: 'Played',
-//     rate: '7',
-//   },
-//   {
-//     image: gameImg,
-//     title: 'Lego Avengers',
-//     status: 'Played',
-//     rate: '7',
-//   },
-// ];
 
 const MyGamesPage = () => {
-  const [games, setGames] = useState([{}]);
-  const [page, setPage] = useState('Game');
+
+  const [games, setGamesDetails] = useState([]);
+  const [developers, setDevelopers] = useState([]);
+  const [publishers, setPublishers] = useState([]);
+  const [current, setCurrent] = useState("Games");
+
   const { userData } = useContext(StoreContext);
 
   useEffect(() => {
     Axios.get(`${BASE_URL}/my-games/${userData.nick}`).then((res) => {
-      setGames(res.data);
+      setGamesDetails(res.data.games)
+      setDevelopers(res.data.developers)
+      setPublishers(res.data.publishers)
     });
   }, []);
 
-  const gamesResultList = games.map((game, idx) => {
-    return (
-      <div className='results-top-bar'>
-        <p className='results-game-num'>{idx}</p>
-        <p className='results-game-miniature'>
-          <img src={game.image} alt='Game Miniature' />
-        </p>
-        <p className='results-title'>{game.title}</p>
-        <p className='results-game-status'>{game.status}</p>
-        <p className='results-game-rate'>{game.rate}</p>
-      </div>
+
+  const listResult = (result) => {
+
+    return( 
+
+      result.map((item, idx) => {
+        return (
+          <div className='results-top-bar'>
+            <p className='results-game-num'>{idx}</p>
+            <p className='results-game-miniature'>
+              <img src={item.image} alt='Game Miniature' />
+            </p>
+            <p className='results-title'>{item.title || item.name}</p>
+            <p className='results-game-status'>{item.status || item.slug}</p>
+            <p className='results-game-rate'>{item.rate}</p>
+          </div>
+        );
+      }
+    )
+    
     );
-  });
+
+  } 
+
+  const render = () =>{
+    switch(current) {
+      case LIST_TYPE.Games:
+        return listResult(games)
+      case LIST_TYPE.Devs:
+        return listResult(developers)
+      case LIST_TYPE.Publishers:
+        return listResult(publishers)
+      default:
+        return []
+    }
+  }
 
   return (
     <div className='my-games-page-container'>
@@ -92,29 +79,26 @@ const MyGamesPage = () => {
 
           <nav className='my-games-menu-list'>
             <ul>
-              <li>All</li>
-              <li>Games</li>
-              <li>Devs</li>
-              <li>Favs</li>
-              <li>Other</li>
+              <li onClick={e => setCurrent(e.target.innerText)}>{LIST_TYPE.Games}</li>
+              <li onClick={e => setCurrent(e.target.innerText)}>{LIST_TYPE.Devs}</li>
+              <li onClick={e => setCurrent(e.target.innerText)}>{LIST_TYPE.Publishers}</li>
             </ul>
           </nav>
         </div>
-
+        
         <div className='chosen-section'>
-          <p>Games</p>
+                <p>Games</p>
         </div>
 
         <div className='my-games-result'>
-          <div className='results-top-bar'>
+        <div className='results-top-bar'>
             <p className='results-game-num'>#</p>
             <p className='results-game-miniature'>Minature</p>
-            <p className='results-title'>Title</p>
-            <p className='results-game-status'>Status</p>
+            <p className='results-title'>{current !== LIST_TYPE.Games ? "Name" : "Title"}</p>
+            <p className='results-game-status'>{current !== LIST_TYPE.Games ? "Slug" : "Status"}</p>
             <p className='results-game-rate'>Rate</p>
-          </div>
-          {gamesResultList}
-        </div>
+        </div>{render()}</div>
+
       </div>
     </div>
   );

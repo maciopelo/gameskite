@@ -67,6 +67,10 @@ const Menu = () => {
               innerText='MyGames'
               route={`/my-games/${userData.nick}`}
             />
+            <MenuButton
+              innerText='Profile'
+              route={`/edit/profile/${userData.nick}`}
+            />
           </>
         )}
         <LoginButton isUserLogged={userData.isLogged} />

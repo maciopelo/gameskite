@@ -16,11 +16,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 /* local db */
+
 const db = mysql.createConnection({
   host: process.env.LOCAL_DB_HOST,
   user: process.env.LOCAL_DB_USER,
   password: process.env.LOCAL_DB_PASSWORD,
   database: process.env.LOCAL_DB_NAME,
+  multipleStatements: true
 });
 
 /* remote db */
@@ -162,6 +164,14 @@ const authenticate = (req, res, next) => {
   });
 };
 
+app.get("/change/nick/:userNick", (req, res) => {
+  const nick = req.params.userNick;
+  const query = "SELECT * FROM users WHERE nick = ?;"
+  db.query(query, [nick], (err, result) => {
+    res.send(Boolean(result.length))
+  })
+})
+
 app.get('/check/auth', authenticate, (req, res) => {
   res.send(req.user);
 });
@@ -169,15 +179,29 @@ app.get('/check/auth', authenticate, (req, res) => {
 app.get('/my-games/:userNick', (req, res) => {
   const nick = req.params.userNick;
   const queryId = 'SELECT id FROM users WHERE nick = ?';
-  const takeGames =
-    'Select image, title, status, rate FROM Games WHERE users_id = ?';
+
+  const gamesQuery = 'SELECT image, title, status, rate FROM Games WHERE users_id = ?;';
+  const developersQuery = 'SELECT image, name, slug, rate FROM developers WHERE users_id = ?;';
+  const publishersQuery = 'SELECT image, name, slug, rate FROM publishers WHERE users_id = ?';
+
 
   db.query(queryId, [nick], (errId, resultId) => {
-    db.query(takeGames, [resultId[0].id], (errGames, resultGames) => {
-      console.log(resultGames);
-      console.log(req.query);
-      res.send(resultGames);
+
+    const whereArray = [resultId[0].id,resultId[0].id,resultId[0].id]
+
+    db.query(gamesQuery+developersQuery+publishersQuery, whereArray, (error, results) => {
+      if(error){
+        throw new Error
+      }
+
+     res.send({
+      games:results[0],
+      developers:results[1],
+      publishers:results[2]
+     })
+
     });
+
   });
 });
 

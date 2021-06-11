@@ -1,0 +1,20 @@
+@import 'global';
+
+.profile-page-container{
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    height:$mainContentHeight;
+}
+
+
+.profile-wrapper{
+    width: 60%;
+    background-color:$bgWhite;
+    
+    .user-nick{
+        color:$mainPageColor;
+        padding-top:0px;
+        margin-left:0px;
+    }
+}
