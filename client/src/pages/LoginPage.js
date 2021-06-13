@@ -17,6 +17,9 @@ const LoginPage = () => {
   const [registerStatus, setRegisterStatus] = useState('');
   const [regResponseDissapear, setRegResponseDissapear] = useState(false);
 
+
+  const [rememberMe, setRememberMe] = useState(false);
+
   const { userData, setUserData, setUserJWT } = useContext(StoreContext);
 
   const handleRegister = (values) => {
@@ -49,15 +52,29 @@ const LoginPage = () => {
         }, 2000);
 
         if (res.data.isLogged && res.data.auth) {
+
+          if (rememberMe) {
+            localStorage.setItem('rememberMe',values.emailLog)
+          } else {
+            if(Boolean(localStorage.rememberMe)){
+              localStorage.removeItem('rememberMe')
+            }
+          }
+
+
           localStorage.setItem('token', res.data.token);
           setUserJWT(res.data.token);
           history.push('/');
+        }else {
+          setLoginStatus(res.data.message);
         }
-      } else {
-        console.log(`Error while logging | Status code: ${res.status}`);
-      }
+
+      } 
     });
   };
+
+
+
 
   const CustomTextInput = ({ label, ...props }) => {
     const [field, meta] = useField(props);
@@ -152,7 +169,7 @@ const LoginPage = () => {
       
       <Formik
         initialValues={{
-          emailLog: '',
+          emailLog: Boolean(localStorage.rememberMe) ? localStorage.rememberMe : "",
           passwordLog: '',
         }}
         validationSchema={Yup.object({
@@ -185,6 +202,16 @@ const LoginPage = () => {
               type='password'
               placeholder='Password'
             />
+
+            <label htmlFor="remember-me" className="remember-me">
+              <input 
+                name="remember-me" 
+                type="checkbox" 
+                onChange={() => setRememberMe(prev => !prev)}
+                checked={rememberMe}/>
+                remember me
+            </label>
+
             <button type='submit'>
               {props.isSubmitting ? 'Loading...' : 'Log in'}
             </button>
@@ -194,7 +221,7 @@ const LoginPage = () => {
                 logResponseDissapear && 'dissapear'
               }`}
             >
-              {userData.message}
+              {loginStatus}
             </h4>
           </Form>
         )}

@@ -33,6 +33,8 @@ const db = mysql.createConnection({
 //   database: process.env.REMOTE_DB_NAME,
 // });
 
+
+// connect to the database
 db.connect((err) => {
   if (err) {
     console.log(err);
@@ -41,6 +43,9 @@ db.connect((err) => {
   }
 });
 
+
+
+// endpoint responsible for user registration
 app.post('/register', (req, res) => {
   console.log(req.body);
 
@@ -86,125 +91,9 @@ app.post('/register', (req, res) => {
   });
 });
 
-app.post('/add_game', (req, res) => {
-  console.log(req.body);
-  const {
-    gameImage,
-    title,
-    status,
-    rate,
-    nick,
-    tableName,
-    namePubOrDev,
-    imagePubOrDev,
-    slug,
-  } = req.body;
-
-  let finalName = title;
-  let finalImg = gameImage;
-  let finalStatus = status;
-
-  const queryId = 'SELECT id FROM users WHERE nick = ?';
-
-  let checkIfExist = 'SELECT * FROM Games WHERE users_id = ? AND title = ?';
-
-  let insertGameQuery =
-    'INSERT INTO Games (image, title, status, rate, users_id) VALUES (?,?,?,?,?)';
-
-  if (tableName !== 'Games') {
-    finalName = namePubOrDev;
-    finalImg = imagePubOrDev;
-    finalStatus = slug;
-
-    checkIfExist = `SELECT * FROM ${tableName} WHERE users_id = ? AND name = ?`;
-
-    insertGameQuery = `INSERT INTO ${tableName} (image, name, slug, rate, users_id) VALUES (?,?,?,?,?)`;
-  }
-
-  //const insertProducentQuery =
-
-  db.query(queryId, [nick], (errId, resultId) => {
-    // console.log(resultId[0].id);
-    // console.log(errId);
-
-    db.query(
-      checkIfExist,
-      [resultId[0].id, finalName],
-      (errCheck, resultCheck) => {
-        if (resultCheck.length > 0) {
-          console.log('Game already added');
-          res.send();
-        } else {
-          db.query(
-            insertGameQuery,
-            [finalImg, finalName, finalStatus, rate, resultId[0].id],
-            (errInsert, resultInsert) => {
-              console.log(errInsert);
-              console.log(resultInsert);
-              res.send();
-            }
-          );
-        }
-      }
-    );
-  });
-});
-
-const authenticate = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (token == null) return res.status(401);
-
-  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
-    if (err) return res.status(403);
-
-    req.user = user;
-    next();
-  });
-};
-
-app.get("/change/nick/:userNick", (req, res) => {
-  const nick = req.params.userNick;
-  const query = "SELECT * FROM users WHERE nick = ?;"
-  db.query(query, [nick], (err, result) => {
-    res.send(Boolean(result.length))
-  })
-})
-
-app.get('/check/auth', authenticate, (req, res) => {
-  res.send(req.user);
-});
-
-app.get('/my-games/:userNick', (req, res) => {
-  const nick = req.params.userNick;
-  const queryId = 'SELECT id FROM users WHERE nick = ?';
-
-  const gamesQuery = 'SELECT image, title, status, rate FROM Games WHERE users_id = ?;';
-  const developersQuery = 'SELECT image, name, slug, rate FROM developers WHERE users_id = ?;';
-  const publishersQuery = 'SELECT image, name, slug, rate FROM publishers WHERE users_id = ?';
 
 
-  db.query(queryId, [nick], (errId, resultId) => {
-
-    const whereArray = [resultId[0].id,resultId[0].id,resultId[0].id]
-
-    db.query(gamesQuery+developersQuery+publishersQuery, whereArray, (error, results) => {
-      if(error){
-        throw new Error
-      }
-
-     res.send({
-      games:results[0],
-      developers:results[1],
-      publishers:results[2]
-     })
-
-    });
-
-  });
-});
-
+// endpoint responsible for user login
 app.post('/login', (req, response) => {
   const { email, password } = req.body;
 
@@ -241,6 +130,226 @@ app.post('/login', (req, response) => {
   });
 });
 
+
+
+// endpoint responsible for adding game to user 
+app.post('/add_game', (req, res) => {
+  console.log(req.body);
+  const {
+    gameImage,
+    title,
+    status,
+    rate,
+    nick,
+    tableName,
+    namePubOrDev,
+    imagePubOrDev,
+    slug,
+  } = req.body;
+
+  let finalName = title;
+  let finalImg = gameImage;
+  let finalStatus = status;
+
+  const queryId = 'SELECT id FROM users WHERE nick = ?';
+
+  let checkIfExist = 'SELECT * FROM Games WHERE users_id = ? AND title = ?';
+
+  let insertGameQuery =
+    'INSERT INTO Games (image, title, status, rate, users_id) VALUES (?,?,?,?,?)';
+
+  if (tableName !== 'Games') {
+    finalName = namePubOrDev;
+    finalImg = imagePubOrDev;
+    finalStatus = slug;
+
+    checkIfExist = `SELECT * FROM ${tableName} WHERE users_id = ? AND name = ?`;
+
+    insertGameQuery = `INSERT INTO ${tableName} (image, name, slug, rate, users_id) VALUES (?,?,?,?,?)`;
+  }
+
+
+
+  db.query(queryId, [nick], (errId, resultId) => {
+
+    db.query(
+      checkIfExist,
+      [resultId[0].id, finalName],
+      (errCheck, resultCheck) => {
+        if (resultCheck.length > 0) {
+          console.log('Game already added');
+          res.send();
+        } else {
+          db.query(
+            insertGameQuery,
+            [finalImg, finalName, finalStatus, rate, resultId[0].id],
+            (errInsert, resultInsert) => {
+              console.log(errInsert);
+              console.log(resultInsert);
+              res.send();
+            }
+          );
+        }
+      }
+    );
+  });
+});
+
+
+
+
+// middleware for jwt authentication
+const authenticate = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token == null) return res.status(401);
+
+  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
+    if (err) return res.status(403);
+
+    req.user = user;
+    next();
+  });
+};
+
+
+// endpoint responsible for user auth after page refresh 
+app.get('/check/auth', authenticate, (req, res) => {
+  res.send(req.user);
+});
+
+
+// endpoint responsible for getting user data 
+app.get('/user/:userNick',(req, res) => {
+  const nick = req.params.userNick;
+  const query = "SELECT * FROM users WHERE nick = ?"
+  db.query(query, [nick], (err, result) => {
+    res.send(result)
+  })
+});
+
+
+// endpoint responsible for getting user data 
+app.put('/user/:userNick',(req, res) => {
+  const nick = req.params.userNick;
+  const {nickToChange, userDescription, newPassword} = req.body
+  
+  let query;
+  let criteriaArray;
+
+  if(Boolean(newPassword)){
+    query = "UPDATE users SET nick = ?, description = ?, password = ? WHERE nick = ?"
+
+    bcrypt.hash(newPassword, 10, (err, newHashedPassword) => {
+      db.query(query, [nickToChange, userDescription, newHashedPassword, nick], (errReg, resultReg) => {
+          console.log(errReg);
+          console.log(resultReg);
+          res.status(204)
+        }
+      );
+    });
+
+
+  }else{
+    query = "UPDATE users SET nick = ?, description = ? WHERE nick = ?"
+    criteriaArray = [nickToChange, userDescription, nick]
+
+    db.query(query, criteriaArray, (err, result) => {
+      if(err){
+        console.log(err)
+        res.status(500)
+      }
+      if(result.changedRows === 0){
+        res.status(200).send({message:"User up to date"})
+      }else{
+        res.status(204).send({
+          message:"User succesfully updated",
+          nick:nickToChange
+        })
+      }
+    })
+
+  }
+
+});
+
+
+
+// endpoint responsible for checking if nick to be changed is not already used
+app.get("/change/nick/:userNick", (req, res) => {
+  const nick = req.params.userNick;
+  const query = "SELECT * FROM users WHERE nick = ?"
+  db.query(query, [nick], (err, result) => {
+    res.send(!Boolean(result.length))
+  })
+})
+
+
+// endpoint responsible for checking while changing password if given old one is prope
+app.post("/change/password/", (req, response) => {
+
+  const { nick, oldPassword } = req.body;
+
+
+
+  const query = 'SELECT * FROM users WHERE nick = ?';
+
+  db.query(query, [nick], (err, result) => {
+    if (err) {
+      res.send({ err: err });
+      return;
+    }
+
+
+    bcrypt.compare(oldPassword, result[0].password, (err, res) => {
+      if (res) {
+        response.send(true)
+      } else {
+        response.send(false)
+      }
+    });
+
+  });
+
+})
+
+
+
+
+app.get('/my-games/:userNick', (req, res) => {
+  const nick = req.params.userNick;
+  const queryId = 'SELECT id FROM users WHERE nick = ?';
+
+  const gamesQuery = 'SELECT image, title, status, rate FROM Games WHERE users_id = ?;';
+  const developersQuery = 'SELECT image, name, slug, rate FROM developers WHERE users_id = ?;';
+  const publishersQuery = 'SELECT image, name, slug, rate FROM publishers WHERE users_id = ?';
+
+
+  db.query(queryId, [nick], (errId, resultId) => {
+
+    const whereArray = [resultId[0].id,resultId[0].id,resultId[0].id]
+
+    db.query(gamesQuery+developersQuery+publishersQuery, whereArray, (error, results) => {
+      if(error){
+        throw new Error
+      }
+
+     res.send({
+      games:results[0],
+      developers:results[1],
+      publishers:results[2]
+     })
+
+    });
+
+  });
+});
+
+
+
+
+// server listening on given PORT
 app.listen(PORT, () => {
   console.log(`App listening at http://localhost:${PORT}`);
 });
