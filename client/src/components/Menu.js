@@ -11,7 +11,7 @@ const Logo = () => {
         <span className='logo-text' style={{ textDecoration: 'none' }}>
           GamesKite
         </span>
-        <img src={kite} className='logo-img' />
+        <img src={kite} className='logo-img' alt="kite-logo-image"/>
       </NavLink>
     </div>
   );
@@ -22,7 +22,7 @@ const LoginButton = ({ isUserLogged }) => {
   const { setUserData, setUserJWT } = useContext(StoreContext);
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("token");
     setUserData({ auth: false, nick: '', isLogged: false });
     setUserJWT(null);
   };

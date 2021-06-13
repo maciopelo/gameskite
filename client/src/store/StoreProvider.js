@@ -17,7 +17,13 @@ const StoreProvider = ({children}) => {
                 "authorization":`Bearer ${token}`,
             }
             }).then(response => {
-                setUserData({auth:true, nick:(response.data.nick || ""), isLogged:true})
+                console.log(response.data)
+                setUserData({
+                    auth:true, 
+                    nick:(response.data.nick || ""), 
+                    description:(response.data.description || ""),
+                    isLogged:true
+                })
 
             }).catch(error => {
                 console.log(error)
