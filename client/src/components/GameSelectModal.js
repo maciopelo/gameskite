@@ -122,7 +122,15 @@ const GameSelectModal = ({ show, chosenGame, onHide }) => {
                 <div style={{ display: publisherStatusText }}>
                   {ListOfpropsToSend('publishers')}
                 </div>
-                <p className='add_p'>Add to favourites</p>
+                <p
+                  className='add_p'
+                  onClick={
+                    userData.isLogged &&
+                    (() => handleAdding('favourites', 'none'))
+                  }
+                >
+                  Add to favourites
+                </p>
                 <p className='score'>Score</p>
                 <p className='p_rating'>
                   <img
